@@ -47,6 +47,21 @@ export const armarTareas = (elemento, listaTareas) => {
         const parrafoDescripcion = document.createElement('p');
         parrafoDescripcion.className = 'message-text';
 
+        //PASO 4: Contenedor de acciones
+        const divAcciones = document.createElement('div');
+        divAcciones.className = 'tarea__acciones';
+
+        // PASO 5: Botones de editar y eliminar
+        const btnEditar = document.createElement('button');
+        btnEditar.classList.add('btn', 'btn-editar-tarea');
+        btnEditar.setAttribute('data-id', tarea.id);
+        btnEditar.textContent = 'Editar';
+
+        const btnEliminar = document.createElement('button');
+        btnEliminar.classList.add('btn', 'btn-eliminar-tarea');
+        btnEliminar.setAttribute('data-id', tarea.id);
+        btnEliminar.textContent = 'Eliminar';
+
         if (tarea.body) {
             parrafoDescripcion.textContent = tarea.body;
         } else {
@@ -56,6 +71,8 @@ export const armarTareas = (elemento, listaTareas) => {
         // PASO 4: Armar la tarjeta completa
         divTarea.append(divCabecera);
         divTarea.append(parrafoDescripcion);
+        divAcciones.append(btnEditar, btnEliminar);
+        divTarea.append(divAcciones);
 
         fragmento.append(divTarea);
     });
