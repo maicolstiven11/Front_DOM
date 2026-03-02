@@ -1,8 +1,8 @@
 /* ============================================
-   MAIN STYLESHEET
+   HOJA DE ESTILOS PRINCIPAL
    ============================================ */
 
-/* Import all component files */
+/* Importar todos los archivos de componentes */
 @import 'css/variables.css';
 @import 'css/base.css';
 @import 'css/layout.css';
