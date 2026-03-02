@@ -2,8 +2,8 @@
  * Archivo Principal: script.js
  * Objetivo: Controlar la lógica de la aplicación, manejar eventos y conectar con la API.
  */
-import { armarUsuario, armarTareas } from "./ui/index.js";
-import { getUserById, getTareasByUserId, createTarea, deleteTarea, updateTarea } from "./use-case/index.js";
+import { armarUsuario, armarTareas } from "./components/index.js";
+import { getUserById, getTareasByUserId, createTarea, deleteTarea, updateTarea } from "./api/index.js";
 
 // ==========================================
 // REFERENCIAS AL DOM (HTML)
