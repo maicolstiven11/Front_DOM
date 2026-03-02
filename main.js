@@ -2,7 +2,7 @@
  * Archivo Principal: script.js
  * Objetivo: Controlar la lógica de la aplicación, manejar eventos y conectar con la API.
  */
-import { armarUsuario, armarTareas } from "./components/index.js";
+import { armarUsuario, armarTareas } from "./ui/index.js";
 import { getUserById, getTareasByUserId, createTarea, deleteTarea, updateTarea } from "./api/index.js";
 
 // ==========================================
@@ -94,7 +94,7 @@ formularioTarea.addEventListener("submit", async (evento) => {
     if (modoEdicion) {
         // ==================== MODO EDICIÓN ====================
         // Estamos actualizando una tarea existente
-        
+
         // Creamos objeto con los datos actualizados
         const datosActualizados = {
             title: titulo, // Nuevo título (puede ser el mismo o modificado)
@@ -105,14 +105,14 @@ formularioTarea.addEventListener("submit", async (evento) => {
         try {
             // Llamamos a la API para actualizar la tarea usando su ID
             const tareaActualizada = await updateTarea(tareaActualId, datosActualizados);
-            
+
             // Actualizamos visualmente solo la tarjeta específica en el DOM
             // Esto evita recargar toda la lista de tareas
             actualizarTarjetaEnDOM(tareaActualId, tareaActualizada);
-            
+
             // Resetear el formulario para que vuelva al modo de creación
             resetearFormularioAModoCrear();
-            
+
         } catch (error) {
             console.error("Error actualizando tarea:", error); // Log del error para debugging
             alert("Hubo un error al actualizar la tarea"); // Mensaje amigable para el usuario
@@ -120,7 +120,7 @@ formularioTarea.addEventListener("submit", async (evento) => {
     } else {
         // ==================== MODO CREACIÓN ====================
         // Estamos creando una tarea nueva
-        
+
         // Creamos el objeto con los datos de la nueva tarea
         const nuevaTarea = {
             title: titulo, // Título de la nueva tarea
@@ -173,18 +173,18 @@ async function cargarTareasDelUsuario(idUsuario) {
 function llenarFormularioConTarea(tarea) {
     // PASO 1: Llenar el campo de título con el título actual
     document.getElementById("taskTitle").value = tarea.title;
-    
+
     // PASO 2: Llenar el campo de descripción (usamos || '' por si es null/undefined)
     document.getElementById("taskBody").value = tarea.body || '';
-    
+
     // PASO 3: Llenar el select de estado según el booleano completed
     // Si completed es true, selecciona 'true', si no, selecciona 'false'
     document.getElementById("taskCompleted").value = tarea.completed ? 'true' : 'false';
-    
+
     // PASO 4: Cambiar el texto visual del formulario para indicar modo edición
     // Cambiamos el título del card de "Nueva Tarea" a "Editar Tarea"
     document.querySelector("#taskFormSection .card__title").textContent = "Editar Tarea";
-    
+
     // Cambiamos el texto del botón de "Agregar Tarea" a "Actualizar Tarea"
     document.getElementById("addTaskBtn").querySelector(".btn__text").textContent = "Actualizar Tarea";
 }
@@ -200,17 +200,17 @@ function actualizarTarjetaEnDOM(tareaId, tareaActualizada) {
     // El selector busca cualquier elemento con data-id igual al ID de la tarea
     // Luego .closest(".message-card") sube hasta encontrar el contenedor principal de la tarjeta
     const tarjeta = document.querySelector(`[data-id="${tareaId}"]`).closest(".message-card");
-    
+
     // PASO 2: Si encontramos la tarjeta, actualizamos sus elementos
     if (tarjeta) {
         // Actualizar el título: buscamos el h3 con clase .message-author y cambiamos su texto
         tarjeta.querySelector(".message-author").textContent = tareaActualizada.title;
-        
+
         // Actualizar la descripción: buscamos el párrafo con clase .message-text
         const parrafoDescripcion = tarjeta.querySelector(".message-text");
         // Si no hay descripción, mostramos el texto por defecto
         parrafoDescripcion.textContent = tareaActualizada.body || 'Sin descripción disponible';
-        
+
         // Actualizar el estado visual (color y texto)
         const spanEstado = tarjeta.querySelector(".status-completed, .status-pending");
         if (tareaActualizada.completed) {
@@ -235,14 +235,14 @@ function resetearFormularioAModoCrear() {
     // PASO 1: Resetear las variables de estado global
     modoEdicion = false; // Volvemos al modo de creación
     tareaActualId = null; // Limpiamos el ID de la tarea que se estaba editando
-    
+
     // PASO 2: Limpiar todos los campos del formulario
     formularioTarea.reset(); // .reset() limpia todos los inputs, textareas y selects
-    
+
     // PASO 3: Restaurar el texto visual original del formulario
     // Cambiamos el título del card de "Editar Tarea" a "Nueva Tarea"
     document.querySelector("#taskFormSection .card__title").textContent = "Nueva Tarea";
-    
+
     // Cambiamos el texto del botón de "Actualizar Tarea" a "Agregar Tarea"
     document.getElementById("addTaskBtn").querySelector(".btn__text").textContent = "Agregar Tarea";
 }
@@ -299,19 +299,19 @@ contenedorTareas.addEventListener("click", async (evento) => {
         // PASO 1: Obtener referencia a la tarjeta completa donde se hizo clic
         // closest(".message-card") sube desde el botón hasta encontrar el contenedor principal
         const tarjeta = evento.target.closest(".message-card");
-        
+
         // PASO 2: Extraer el título actual de la tarea
         // querySelector(".message-author") busca el elemento h3 con el título
         const tituloActual = tarjeta.querySelector(".message-author").textContent;
-        
+
         // PASO 3: Extraer la descripción actual de la tarea
         // querySelector(".message-text") busca el párrafo con la descripción
         const descripcionActual = tarjeta.querySelector(".message-text").textContent;
-        
+
         // PASO 4: Extraer el elemento span que contiene el estado (Completada/Pendiente)
         // Busca un elemento que tenga cualquiera de las dos clases de estado
         const spanEstado = tarjeta.querySelector(".status-completed, .status-pending");
-        
+
         // PASO 5: Determinar si la tarea está completada o no
         // contains("status-completed") devuelve true si tiene la clase "completed"
         const estadoActual = spanEstado.classList.contains("status-completed");
