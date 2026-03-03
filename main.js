@@ -3,9 +3,8 @@
  * Objetivo: Controlar la lógica de la aplicación, manejar eventos y conectar con la API y Servicios.
  */
 import { buscarYMostrarUsuario, procesarCreacionTarea, procesarActualizacionTarea, procesarEliminacionTarea } from "./services/index.js";
-import { armarFiltros } from "./ui/index.js";
-import { armarTareas } from "./ui/index.js";
-import { setFiltroEstado, setFiltroUsuario, getFiltroEstado, getFiltroUsuario, obtenerTareasFiltradas, resetearFiltros } from "./services/index.js";
+import { armarFiltros, armarTareas } from "./ui/index.js";
+import { setFiltroEstado, setFiltroUsuario, getFiltroEstado, getFiltroUsuario, obtenerTareasFiltradas, resetearFiltros, setCriterioOrden, setDireccionOrden, getCriterioOrden, getDireccionOrden, resetearOrden } from "./services/index.js";
 
 // ==========================================
 // REFERENCIAS AL DOM (HTML)
@@ -126,12 +125,16 @@ formularioBusqueda.addEventListener("submit", async (evento) => {
     if (usuarioActual) {
         seccionFiltros.classList.remove("hidden");
 
-        // Armar el panel de filtros con el usuario actual
-        const { selectEstado, selectUsuario, btnLimpiar } = armarFiltros(contenedorFiltros, [usuarioActual]);
+        // Armar el panel de filtros + ordenamiento con el usuario actual
+        const { selectEstado, selectUsuario, btnLimpiar, selectOrden, btnDireccion } = armarFiltros(contenedorFiltros, [usuarioActual]);
 
-        // Sincronizar los selects con los filtros actuales (por si ya había filtros)
+        // Sincronizar los controles con el estado actual
         selectEstado.value = getFiltroEstado();
         selectUsuario.value = getFiltroUsuario();
+        selectOrden.value = getCriterioOrden();
+        btnDireccion.setAttribute('data-dir', getDireccionOrden());
+        btnDireccion.querySelector('.sort-dir-icon').textContent = getDireccionOrden() === 'asc' ? '▲' : '▼';
+        btnDireccion.querySelector('.sort-dir-text').textContent = getDireccionOrden() === 'asc' ? 'ASC' : 'DESC';
 
         // ---- Listener: Filtro por Estado ----
         selectEstado.addEventListener('change', () => {
@@ -145,11 +148,32 @@ formularioBusqueda.addEventListener("submit", async (evento) => {
             renderTareasFiltradas();
         });
 
-        // ---- Listener: Botón Limpiar Filtros ----
+        // ---- Listener: Criterio de Orden ----
+        selectOrden.addEventListener('change', () => {
+            setCriterioOrden(selectOrden.value);
+            renderTareasFiltradas();
+        });
+
+        // ---- Listener: Botón Dirección (toggle ▲/▼) ----
+        btnDireccion.addEventListener('click', () => {
+            const nuevaDir = getDireccionOrden() === 'asc' ? 'desc' : 'asc';
+            setDireccionOrden(nuevaDir);
+            btnDireccion.setAttribute('data-dir', nuevaDir);
+            btnDireccion.querySelector('.sort-dir-icon').textContent = nuevaDir === 'asc' ? '▲' : '▼';
+            btnDireccion.querySelector('.sort-dir-text').textContent = nuevaDir === 'asc' ? 'ASC' : 'DESC';
+            renderTareasFiltradas();
+        });
+
+        // ---- Listener: Botón Limpiar (filtros + orden) ----
         btnLimpiar.addEventListener('click', () => {
             resetearFiltros();
+            resetearOrden();
             selectEstado.value = 'all';
             selectUsuario.value = 'all';
+            selectOrden.value = 'fecha';
+            btnDireccion.setAttribute('data-dir', 'asc');
+            btnDireccion.querySelector('.sort-dir-icon').textContent = '▲';
+            btnDireccion.querySelector('.sort-dir-text').textContent = 'ASC';
             renderTareasFiltradas();
         });
     }
@@ -210,7 +234,8 @@ formularioTarea.addEventListener("submit", async (evento) => {
             body: descripcion,
             completed: estaCompletada,
             status: statusInterno,
-            userId: usuarioActual.id
+            userId: usuarioActual.id,
+            createdAt: Date.now()  // marca de tiempo local para ordenar por fecha
         };
 
         await procesarCreacionTarea(nuevaTarea, contenedorTareas, formularioTarea, renderTareasFiltradas);

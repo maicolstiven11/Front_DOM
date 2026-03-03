@@ -1,16 +1,17 @@
 /**
  * Componente: filtros.js
- * Objetivo: Construir y renderizar el panel de filtros en el DOM.
+ * Objetivo: Construir y renderizar el panel de filtros y ordenamiento en el DOM.
  *
- * Exporta `armarFiltros` que genera los controles de filtrado
- * (selects de Estado y Usuario) dentro del contenedor indicado.
+ * Exporta `armarFiltros` que genera los controles de filtrado (selects de Estado
+ * y Usuario) y los controles de ordenamiento (criterio + dirección) dentro del
+ * contenedor indicado.
  */
 
 /**
- * Construye el panel de filtros con los usuarios disponibles.
+ * Construye el panel de filtros y ordenamiento con los usuarios disponibles.
  * @param {HTMLElement} contenedor - Donde se renderiza el panel.
  * @param {Array} usuarios - Lista de objetos usuario [{ id, name }...]
- * @returns {Object} - Referencias a los selects { selectEstado, selectUsuario }
+ * @returns {Object} - Referencias a los controles { selectEstado, selectUsuario, selectOrden, btnDireccion, badge, btnLimpiar }
  */
 export const armarFiltros = (contenedor, usuarios = []) => {
     contenedor.innerHTML = '';
@@ -19,18 +20,17 @@ export const armarFiltros = (contenedor, usuarios = []) => {
     const panel = document.createElement('div');
     panel.className = 'filter-panel';
 
-    // --- Título del panel ---
-    const titulo = document.createElement('h3');
-    titulo.className = 'filter-panel__title';
-    titulo.textContent = '🔎 Filtrar Tareas';
+    // ==================================================
+    // FILA 1: FILTROS
+    // ==================================================
+    const tituloFiltros = document.createElement('h3');
+    tituloFiltros.className = 'filter-panel__title';
+    tituloFiltros.textContent = '🔎 Filtrar y Ordenar Tareas';
 
-    // --- Wrapper de controles ---
-    const controles = document.createElement('div');
-    controles.className = 'filter-controls';
+    const controlesFilros = document.createElement('div');
+    controlesFilros.className = 'filter-controls';
 
-    // ==============================
-    // SELECT: Filtro por Estado
-    // ==============================
+    // ---- SELECT: Filtro por Estado ----
     const grupoEstado = document.createElement('div');
     grupoEstado.className = 'filter-group';
 
@@ -43,14 +43,12 @@ export const armarFiltros = (contenedor, usuarios = []) => {
     selectEstado.id = 'filtroEstado';
     selectEstado.className = 'filter-select';
 
-    const opcionesEstado = [
+    [
         { value: 'all', text: 'Todos los estados' },
         { value: 'pending', text: '🕐 Pendiente' },
         { value: 'in-progress', text: '⚡ En proceso' },
         { value: 'completed', text: '✅ Completada' },
-    ];
-
-    opcionesEstado.forEach(op => {
+    ].forEach(op => {
         const option = document.createElement('option');
         option.value = op.value;
         option.textContent = op.text;
@@ -59,9 +57,7 @@ export const armarFiltros = (contenedor, usuarios = []) => {
 
     grupoEstado.append(labelEstado, selectEstado);
 
-    // ==============================
-    // SELECT: Filtro por Usuario
-    // ==============================
+    // ---- SELECT: Filtro por Usuario ----
     const grupoUsuario = document.createElement('div');
     grupoUsuario.className = 'filter-group';
 
@@ -74,13 +70,11 @@ export const armarFiltros = (contenedor, usuarios = []) => {
     selectUsuario.id = 'filtroUsuario';
     selectUsuario.className = 'filter-select';
 
-    // Opción "todos"
     const optTodos = document.createElement('option');
     optTodos.value = 'all';
     optTodos.textContent = 'Todos los usuarios';
     selectUsuario.append(optTodos);
 
-    // Opciones dinámicas por usuario
     usuarios.forEach(u => {
         const opt = document.createElement('option');
         opt.value = String(u.id);
@@ -90,24 +84,65 @@ export const armarFiltros = (contenedor, usuarios = []) => {
 
     grupoUsuario.append(labelUsuario, selectUsuario);
 
-    // ==============================
-    // BADGE de resultados
-    // ==============================
+    // ---- BADGE de resultados ----
     const badge = document.createElement('div');
     badge.className = 'filter-badge';
     badge.id = 'filterResultsBadge';
     badge.textContent = 'Mostrando todas las tareas';
 
-    // --- Botón limpiar filtros ---
+    // ---- Botón limpiar ----
     const btnLimpiar = document.createElement('button');
     btnLimpiar.className = 'filter-clear-btn';
     btnLimpiar.id = 'filterClearBtn';
-    btnLimpiar.textContent = '✕ Limpiar filtros';
+    btnLimpiar.textContent = '✕ Limpiar todo';
 
-    // --- Ensamblaje ---
-    controles.append(grupoEstado, grupoUsuario, badge, btnLimpiar);
-    panel.append(titulo, controles);
+    controlesFilros.append(grupoEstado, grupoUsuario, badge, btnLimpiar);
+
+    // ==================================================
+    // FILA 2: ORDENAMIENTO
+    // ==================================================
+    const separador = document.createElement('div');
+    separador.className = 'sort-separator';
+
+    const controlesOrden = document.createElement('div');
+    controlesOrden.className = 'sort-controls';
+
+    // Etiqueta de la sección
+    const etiquetaOrden = document.createElement('span');
+    etiquetaOrden.className = 'sort-label';
+    etiquetaOrden.textContent = '↕ Ordenar por:';
+
+    // ---- SELECT: Criterio de orden ----
+    const selectOrden = document.createElement('select');
+    selectOrden.id = 'criterioOrden';
+    selectOrden.className = 'filter-select sort-select';
+
+    [
+        { value: 'fecha', text: '📅 Fecha de creación' },
+        { value: 'nombre', text: '🔤 Nombre (A–Z)' },
+        { value: 'estado', text: '🏷️ Estado' },
+    ].forEach(op => {
+        const option = document.createElement('option');
+        option.value = op.value;
+        option.textContent = op.text;
+        selectOrden.append(option);
+    });
+
+    // ---- BOTÓN: Dirección de orden (toggle ▲/▼) ----
+    const btnDireccion = document.createElement('button');
+    btnDireccion.id = 'btnDireccionOrden';
+    btnDireccion.className = 'sort-direction-btn';
+    btnDireccion.setAttribute('data-dir', 'asc');
+    btnDireccion.setAttribute('title', 'Cambiar dirección de orden');
+    btnDireccion.innerHTML = '<span class="sort-dir-icon">▲</span><span class="sort-dir-text">ASC</span>';
+
+    controlesOrden.append(etiquetaOrden, selectOrden, btnDireccion);
+
+    // ==================================================
+    // ENSAMBLAJE FINAL
+    // ==================================================
+    panel.append(tituloFiltros, controlesFilros, separador, controlesOrden);
     contenedor.append(panel);
 
-    return { selectEstado, selectUsuario, badge, btnLimpiar };
+    return { selectEstado, selectUsuario, badge, btnLimpiar, selectOrden, btnDireccion };
 };
