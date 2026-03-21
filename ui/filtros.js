@@ -14,7 +14,7 @@
  * @returns {Object} - Referencias a los controles { selectEstado, selectUsuario, selectOrden, btnDireccion, badge, btnLimpiar }
  */
 export const armarFiltros = (contenedor, usuarios = []) => {
-    contenedor.innerHTML = '';
+    contenedor.replaceChildren();
 
     // --- Contenedor principal del panel ---
     const panel = document.createElement('div');
@@ -134,7 +134,16 @@ export const armarFiltros = (contenedor, usuarios = []) => {
     btnDireccion.className = 'sort-direction-btn';
     btnDireccion.setAttribute('data-dir', 'asc');
     btnDireccion.setAttribute('title', 'Cambiar dirección de orden');
-    btnDireccion.innerHTML = '<span class="sort-dir-icon">▲</span><span class="sort-dir-text">ASC</span>';
+    
+    const spanIcon = document.createElement('span');
+    spanIcon.className = 'sort-dir-icon';
+    spanIcon.textContent = '▲';
+    
+    const spanText = document.createElement('span');
+    spanText.className = 'sort-dir-text';
+    spanText.textContent = 'ASC';
+    
+    btnDireccion.replaceChildren(spanIcon, spanText);
 
     controlesOrden.append(etiquetaOrden, selectOrden, btnDireccion);
 

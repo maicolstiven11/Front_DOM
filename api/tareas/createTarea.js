@@ -1,15 +1,39 @@
+import { BASE_URL } from '../config.js';
+
 export const createTarea = async (nuevaTarea) => {
+    // Mapeo hacia el backend
+    const bodyBackend = {
+        titulo: nuevaTarea.title,
+        descripcion: nuevaTarea.body || 'Sin descripción',
+        estado: nuevaTarea.status || (nuevaTarea.completed ? 'completada' : 'pendiente'),
+        userId: nuevaTarea.userId
+    };
+
     const opciones = {
         method: 'POST',
-        body: JSON.stringify(nuevaTarea),
+        body: JSON.stringify(bodyBackend),
         headers: {
             'Content-type': 'application/json; charset=UTF-8',
         },
     };
 
-    const respuesta = await fetch('https://jsonplaceholder.typicode.com/todos', opciones);
+    const respuesta = await fetch(`${BASE_URL}/tareas`, opciones);
     if (respuesta.ok) {
-        return await respuesta.json();
+        const json = await respuesta.json();
+        const t = json.data;
+        const backToFront = {
+            'completada': 'completed',
+            'pendiente': 'pending',
+            'en proceso': 'in-progress'
+        };
+        // Mapeo de vuelta para el front
+        return {
+            ...t,
+            title: t.titulo,
+            body: t.descripcion,
+            status: backToFront[t.estado] || t.estado,
+            completed: t.estado === 'completada'
+        };
     } else {
         throw new Error("Hubo un error al guardar la tarea");
     }

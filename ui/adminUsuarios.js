@@ -7,16 +7,25 @@
  */
 
 export const armarListaUsuarios = (contenedor, listaUsuarios) => {
-    contenedor.innerHTML = '';
+    contenedor.replaceChildren();
 
     if (listaUsuarios.length === 0) {
         const divVacio = document.createElement('div');
         divVacio.className = 'filter-no-results';
-        divVacio.innerHTML = `
-            <div class="filter-no-results__icon">👤</div>
-            <p class="filter-no-results__text">Sin usuarios registrados</p>
-            <p class="filter-no-results__sub">Registra un nuevo usuario usando el formulario.</p>
-        `;
+        
+        const iconNode = document.createElement('div');
+        iconNode.className = 'filter-no-results__icon';
+        iconNode.textContent = '👤';
+        
+        const textNode = document.createElement('p');
+        textNode.className = 'filter-no-results__text';
+        textNode.textContent = 'Sin usuarios registrados';
+        
+        const subNode = document.createElement('p');
+        subNode.className = 'filter-no-results__sub';
+        subNode.textContent = 'Registra un nuevo usuario usando el formulario.';
+        
+        divVacio.append(iconNode, textNode, subNode);
         contenedor.append(divVacio);
         return;
     }
@@ -57,7 +66,15 @@ export const armarListaUsuarios = (contenedor, listaUsuarios) => {
             if (!valor) return;
             const fila = document.createElement('p');
             fila.className = `user-card__field ${clase}`;
-            fila.innerHTML = `<span class="field-icon">${icono}</span> <strong>${etiqueta}:</strong> ${valor}`;
+            
+            const spanIcon = document.createElement('span');
+            spanIcon.className = 'field-icon';
+            spanIcon.textContent = icono;
+            
+            const strongTag = document.createElement('strong');
+            strongTag.textContent = `${etiqueta}:`;
+            
+            fila.append(spanIcon, ' ', strongTag, ` ${valor}`);
             cuerpo.append(fila);
         });
 

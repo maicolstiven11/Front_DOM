@@ -1,32 +1,33 @@
 import { BASE_URL } from '../config.js';
 
-export const updateTarea = async (tareaId, tarea) => {
-    // Mapeamos los campos del frente (Inglés) a los del backend (Español)
-    const bodyBackend = {
-        titulo: tarea.title,
-        descripcion: tarea.body,
-        estado: tarea.status || (tarea.completed ? 'completada' : 'pendiente')
+export const updateTareaStatus = async (id, status) => {
+    // Mapeo de estados entre frontend (Inglés) y backend (Español)
+    const mapping = {
+        'completed': 'completada',
+        'pending': 'pendiente',
+        'in-progress': 'en proceso'
     };
+    
+    const estadoBackend = mapping[status] || status;
 
     try {
-        const respuesta = await fetch(`${BASE_URL}/tareas/${tareaId}`, {
+        const respuesta = await fetch(`${BASE_URL}/tareas/${id}`, {
             method: 'PUT', // Usamos PUT ya que el backend original lo requiere
-            body: JSON.stringify(bodyBackend),
             headers: {
-                'Content-type': 'application/json; charset=UTF-8',
+                'Content-Type': 'application/json'
             },
+            body: JSON.stringify({ estado: estadoBackend })
         });
-
+        
         if (respuesta.ok) {
             const json = await respuesta.json();
             const t = json.data;
-            // Mapeamos de vuelta para que el frontend siga funcionando igual
             const backToFront = {
                 'completada': 'completed',
                 'pendiente': 'pending',
                 'en proceso': 'in-progress'
             };
-            // Mapeo de vuelta para el front
+            // Mapeamos de vuelta para que el frontend siga funcionando igual
             return {
                 ...t,
                 title: t.titulo,
@@ -35,10 +36,10 @@ export const updateTarea = async (tareaId, tarea) => {
                 completed: t.estado === 'completada'
             };
         } else {
-            throw new Error('Error al actualizar la tarea');
+            throw new Error('Error al actualizar el estado de la tarea en el servidor');
         }
     } catch (error) {
-        console.error("Error en la petición de actualización:", error);
+        console.error("Error en la petición de cambio de estado:", error);
         throw error;
     }
 };

@@ -1,5 +1,7 @@
+import { BASE_URL } from '../config.js';
+
 export const createUsuario = async (nuevoUsuario) => {
-    const respuesta = await fetch('https://jsonplaceholder.typicode.com/users', {
+    const respuesta = await fetch(`${BASE_URL}/usuarios`, {
         method: 'POST',
         body: JSON.stringify(nuevoUsuario),
         headers: {
@@ -7,7 +9,8 @@ export const createUsuario = async (nuevoUsuario) => {
         },
     });
     if (respuesta.ok) {
-        return await respuesta.json();
+        const json = await respuesta.json();
+        return json.data;
     } else {
         throw new Error('Hubo un error al registrar el usuario');
     }

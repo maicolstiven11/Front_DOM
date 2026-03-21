@@ -7,7 +7,7 @@ import { guardarTareas, agregarTarea, actualizarTareaEnEstado, eliminarTareaDelE
  * Almacena las tareas en filterService (fuente de verdad) y delega el render.
  */
 export const cargarTareasDelUsuario = async (idUsuario, contenedorTareas, renderFn) => {
-    contenedorTareas.innerHTML = '';
+    contenedorTareas.replaceChildren();
     try {
         const tareas = await getTareasByUserId(idUsuario);
         guardarTareas(tareas);          // guardar en filterService

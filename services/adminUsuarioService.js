@@ -35,7 +35,11 @@ export const eliminarUsuarioDelEstado = (id) => {
  * Carga todos los usuarios desde la API y los renderiza.
  */
 export const cargarTodosLosUsuarios = async (contenedor, renderFn) => {
-    contenedor.innerHTML = '<p class="loading-text">Cargando usuarios...</p>';
+    contenedor.replaceChildren();
+    const pLoading = document.createElement('p');
+    pLoading.className = 'loading-text';
+    pLoading.textContent = 'Cargando usuarios...';
+    contenedor.appendChild(pLoading);
     try {
         const usuarios = await getAllUsers();
         guardarUsuarios(usuarios);
