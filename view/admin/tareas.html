@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin — Gestión de Tareas</title>
+    <link rel="stylesheet" href="../../styles.css">
+    <style>
+        .users-checklist {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid var(--color-border);
+            padding: 10px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.05);
+        }
+        .users-checklist label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Hero / Encabezado Admin -->
+        <div class="admin-hero">
+            <div class="admin-hero__info">
+                <h1>📋 Panel de Tareas (Global)</h1>
+                <p>Gestión completa de tareas de todos los usuarios</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <a href="../../index.html" class="admin-hero__back">← Menú Principal</a>
+                <a href="index.html" class="admin-hero__back" style="background: rgba(255,255,255,0.2);">🛡️ Ver Usuarios</a>
+            </div>
+        </div>
+
+        <!-- Sección: Formulario de tareas (crear / asignar) -->
+        <section id="taskFormSection" class="form-section">
+            <div class="card">
+                <h2 class="card__title" id="formTitle">Asignar Nueva Tarea</h2>
+                <form id="taskForm" class="form" novalidate>
+
+                    <div class="form__group">
+                        <label for="taskTitle" class="form__label">Título de la tarea <span style="color:red">*</span></label>
+                        <input type="text" id="taskTitle" class="form__input" placeholder="Ej: Revisar documentación" required>
+                    </div>
+
+                    <div class="form__group">
+                        <label for="taskDescription" class="form__label">Descripción de la tarea</label>
+                        <textarea id="taskDescription" class="form__input" placeholder="Ej: Leer y analizar los requisitos del sistema" style="min-height: 80px; resize: vertical;"></textarea>
+                    </div>
+
+                    <div class="form__group">
+                        <label class="form__label">Asignar a usuarios <span style="color:red">*</span></label>
+                        <!-- Usaremos checkboxes para Asignación Múltiple -->
+                        <div class="users-checklist" id="usersChecklistContainer">
+                            <p class="loading-text">Cargando usuarios...</p>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:.75rem; flex-wrap:wrap; align-items:center;">
+                        <button type="submit" class="btn btn--primary" id="submitTaskBtn">
+                            <span class="btn__text">Crear Tarea</span>
+                            <span class="btn__icon">➤</span>
+                        </button>
+                        <button type="button" class="btn--cancel hidden" id="cancelEditTaskBtn">✕ Cancelar edición</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Sección: Lista global de tareas -->
+        <section class="messages-section">
+            <div class="messages-header" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.5rem;">
+                <h2 class="messages-header__title">Todas las Tareas</h2>
+                <button class="btn btn--primary" id="loadTasksBtn" style="font-size:.85rem; padding:.45rem 1rem;">
+                    <span class="btn__text">Cargar Tareas</span>
+                    <span class="btn__icon">🔄</span>
+                </button>
+            </div>
+
+            <!-- Toolbar: búsqueda y filtro por usuario -->
+            <div class="users-toolbar" style="flex-wrap: wrap; gap: 10px;">
+                <input type="text" id="searchTask" class="form__input" style="flex: 1;" placeholder="🔍 Buscar por título de tarea...">
+                
+                <div class="filter-group">
+                    <label for="filterUserSelect">Filtrar por Usuario:</label>
+                    <select id="filterUserSelect" class="form__input" style="width: auto; margin-bottom: 0;">
+                        <option value="">Todos los usuarios</option>
+                    </select>
+                </div>
+                
+                <span class="total-badge" id="totalTasksBadge">0 tareas en total</span>
+            </div>
+
+            <!-- Contenedor dinámico de tareas -->
+            <div id="tasksContainer" class="messages-container">
+                <p class="loading-text">Presiona «Cargar Tareas» para ver la vista global.</p>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <p class="footer__text">Panel Admin — Gestión de Tareas | SENA - Desarrollo Web</p>
+        </footer>
+    </div>
+
+    <!-- Referenciamos el script específico para la gestión de tareas de admin -->
+    <script type="module" src="tareas_admin.js"></script>
+</body>
+</html>

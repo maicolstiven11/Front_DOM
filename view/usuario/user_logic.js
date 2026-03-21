@@ -6,6 +6,7 @@
 // Importamos las herramientas necesarias de otros archivos
 import { cargarTareasDelUsuario, procesarActualizacionTarea, setFiltroEstado, obtenerTareasFiltradas, resetearFiltros, obtenerTodasLasTareas } from "../../services/index.js";
 import { armarTareasUsuario, notificarExito, notificarError } from "../../ui/index.js";
+import { BASE_URL } from "../../api/config.js";
 
 // Variable para guardar el usuario actual tras la búsqueda
 let usuarioActualId = null;
@@ -35,7 +36,7 @@ function renderUserTasks() {
     const tareasFiltradas = obtenerTareasFiltradas();
 
     // Limpiamos lo que haya en el contenedor de tareas para empezar de cero
-    contenedorTareas.innerHTML = '';
+    contenedorTareas.replaceChildren();
 
     // Si no hay ninguna tarea para mostrar, creamos un mensaje amigable
     if (tareasFiltradas.length === 0) {
@@ -141,13 +142,28 @@ async function manejarBusquedaUsuario() {
     searchError.style.display = "none";
     welcomeTitle.textContent = "Buscando...";
     welcomeSubtitle.textContent = "Por favor espera.";
-    contenedorTareas.innerHTML = '<p class="loading-text" style="text-align:center; padding: 2rem; color: #6b7280;">Cargando...</p>';
+    contenedorTareas.replaceChildren();
+    
+    const pLoading = document.createElement('p');
+    pLoading.className = 'loading-text';
+    pLoading.style.textAlign = 'center';
+    pLoading.style.padding = '2rem';
+    pLoading.style.color = '#6b7280';
+    pLoading.textContent = 'Cargando...';
+    
+    contenedorTareas.appendChild(pLoading);
 
+    console.log(`Buscando usuario en: ${BASE_URL}/usuarios/${id}`);
     try {
-        const respuesta = await fetch(`https://jsonplaceholder.typicode.com/users/${id}`);
-        if (!respuesta.ok) throw new Error("No encontrado");
+        const respuesta = await fetch(`${BASE_URL}/usuarios/${id}`);
+        if (!respuesta.ok) {
+            console.warn(`Respuesta no OK para usuario ${id}:`, respuesta.status);
+            throw new Error("No encontrado");
+        }
 
-        const usuario = await respuesta.json();
+        const json = await respuesta.json();
+        console.log("Datos recibidos del backend:", json);
+        const usuario = json.data;
         usuarioActualId = usuario.id;
 
         // Actualizamos cabecera dinámica
@@ -164,11 +180,12 @@ async function manejarBusquedaUsuario() {
         await cargarTareasDelUsuario(usuarioActualId, contenedorTareas, renderUserTasks);
 
     } catch (error) {
+        console.error("Error en manejarBusquedaUsuario:", error);
         searchError.style.display = "block";
-        searchError.textContent = "Usuario no encontrado en el sistema.";
+        searchError.textContent = `Error: ${error.message === 'No encontrado' ? 'Usuario no encontrado' : 'Error de conexión con el servidor'}`;
         welcomeTitle.textContent = "¡Hola, Usuario! 👋";
         welcomeSubtitle.textContent = "Busca tu ID para ver tus tareas.";
-        contenedorTareas.innerHTML = ''; // Limpiamos las tareas
+        contenedorTareas.replaceChildren(); // Limpiamos las tareas
 
         statTotales.textContent = "0";
         statProgreso.textContent = "0";
@@ -189,7 +206,14 @@ async function init() {
     });
 
     // Limpiamos la pantalla inicial
-    contenedorTareas.innerHTML = '<p class="loading-text" style="text-align:center; padding: 2rem; color: #6b7280;">Busca tu ID de usuario en el panel izquierdo.</p>';
+    contenedorTareas.replaceChildren();
+    const pInit = document.createElement('p');
+    pInit.className = 'loading-text';
+    pInit.style.textAlign = 'center';
+    pInit.style.padding = '2rem';
+    pInit.style.color = '#6b7280';
+    pInit.textContent = 'Busca tu ID de usuario en el panel izquierdo.';
+    contenedorTareas.appendChild(pInit);
 
     // Configuramos qué pasa cuando haces clic en los botones de "Pendientes", "Hechas", etc.
     filtroBotones.forEach(btn => {

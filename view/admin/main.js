@@ -162,7 +162,11 @@ function actualizarTarjetaEnDOM(id, datos) {
 
     const upd = (clase, valor) => {
         const el = tarjeta.querySelector(`.${clase}`);
-        if (el && valor) el.innerHTML = el.innerHTML.replace(/:\s.*/, `: ${valor}`);
+        // En lugar de reemplazo innerHTML, asumimos que la estructura es texto simple o usamos textContent
+        if (el && valor) {
+            const currentText = el.textContent || "";
+            el.textContent = currentText.replace(/:\s.*/, `: ${valor}`);
+        }
     };
 
     tarjeta.querySelector('.message-author').textContent = datos.name;
