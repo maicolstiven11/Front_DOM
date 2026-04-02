@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Tareas | Vista Usuario</title>
+    <link rel="stylesheet" href="user_styles.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <div class="logo-icon">U</div>
+                <h2 class="logo-text">Usuario</h2>
+            </div>
+
+            <div class="user-search-box"
+                style="padding: 0 var(--spacing-md) var(--spacing-md); border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: var(--spacing-md);">
+                <label for="searchUserId"
+                    style="color: rgba(255,255,255,0.8); font-size: 0.8rem; display: block; margin-bottom: 5px;">Buscar
+                    Nombre Usuario:</label>
+                <div style="display: flex; gap: 5px;">
+                    <input type="text" id="searchUserId" placeholder="Ej: Juan"
+                        style="width: 100%; padding: 5px 10px; border-radius: 4px; border: none; outline: none; font-family: inherit;">
+                    <button id="btnSearchUser"
+                        style="padding: 5px 10px; background: #4f46e5; color: white; border: none; border-radius: 4px; cursor: pointer; transition: background 0.2s;">🔍</button>
+                </div>
+                <p id="searchUserError" style="color: #ef4444; font-size: 0.75rem; margin-top: 5px; display: none;">
+                    Usuario no encontrado</p>
+            </div>
+
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item active">
+                        <span>📊</span>
+                        <span>Dashboard</span>
+                    </li>
+                    <a href="../../index.html" style="text-decoration: none;">
+                        <li class="nav-item">
+                            <span>⬅️</span>
+                            <span>Menú Principal</span>
+                        </li>
+                    </a>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Dashboard -->
+        <main class="main-content">
+            <header class="header">
+                <div class="welcome-section">
+                    <h1 id="welcomeTitle">¡Hola, Usuario! 👋</h1>
+                    <p id="welcomeSubtitle">Aquí tienes el resumen de las tareas asignadas.</p>
+                </div>
+                <div class="user-profile">
+                    <img id="userAvatar" src="https://ui-avatars.com/api/?name=Usuario&background=4f46e5&color=fff"
+                        alt="Avatar" style="border-radius: 50%; width: 45px;">
+                </div>
+            </header>
+
+            <!-- Stats Overview -->
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-value">12</span>
+                    <span class="stat-label">Tareas Totales</span>
+                </div>
+                <div class="stat-card" style="border-left-color: var(--color-warning);">
+                    <span class="stat-value">5</span>
+                    <span class="stat-label">En Progreso</span>
+                </div>
+                <div class="stat-card" style="border-left-color: var(--color-success);">
+                    <span class="stat-value">7</span>
+                    <span class="stat-label">Completadas</span>
+                </div>
+            </section>
+
+            <!-- Tasks Container -->
+            <section class="task-section">
+                <div class="task-header">
+                    <h2>Mis Tareas</h2>
+                    <div class="filters">
+                        <button class="filter-btn active" data-filter="all">Todas</button>
+                        <button class="filter-btn" data-filter="pending">Pendientes</button>
+                        <button class="filter-btn" data-filter="in-progress">En proceso</button>
+                        <button class="filter-btn" data-filter="completed">Completadas</button>
+                    </div>
+                </div>
+
+                <div class="task-grid" id="task-container">
+                    <!-- Task Card Example 1 -->
+                    <div class="task-card">
+                        <div class="task-info">
+                            <div class="task-check"></div>
+                            <span class="task-title">Revisar documentación del backend</span>
+                        </div>
+                        <span class="task-priority priority-high">Alta</span>
+                    </div>
+
+                    <!-- Task Card Example 2 -->
+                    <div class="task-card">
+                        <div class="task-info">
+                            <div class="task-check"></div>
+                            <span class="task-title">Actualizar estilos de la vista usuario</span>
+                        </div>
+                        <span class="task-priority priority-medium">Media</span>
+                    </div>
+
+                    <!-- Task Card Example 3 (Completed) -->
+                    <div class="task-card completed">
+                        <div class="task-info">
+                            <div class="task-check">✓</div>
+                            <span class="task-title">Configurar variables CSS principales</span>
+                        </div>
+                        <span class="task-priority priority-low">Baja</span>
+                    </div>
+
+                    <!-- Task Card Example 4 -->
+                    <div class="task-card">
+                        <div class="task-info">
+                            <div class="task-check"></div>
+                            <span class="task-title">Diseñar layout responsivo</span>
+                        </div>
+                        <span class="task-priority priority-high">Alta</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <!-- Script tipo módulo para la lógica del usuario -->
+    <script type="module" src="user_logic.js"></script>
+</body>
+
+</html>

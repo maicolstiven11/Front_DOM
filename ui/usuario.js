@@ -9,7 +9,7 @@
 
 export const armarUsuario = (elemento, usuario) => {
     // PASO 1: Limpiar el contenedor
-    elemento.innerHTML = '';
+    elemento.replaceChildren();
 
     // PASO 2: Crear un Fragmento de Documento
     const fragmento = document.createDocumentFragment();
