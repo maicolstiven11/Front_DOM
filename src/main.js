@@ -234,7 +234,7 @@ formularioTarea.addEventListener("submit", async (evento) => {
             body: descripcion,
             completed: estaCompletada,
             status: statusInterno,
-            userId: usuarioActual.id,
+            userIds: [usuarioActual.id],
             createdAt: Date.now()  // marca de tiempo local para ordenar por fecha
         };
 
